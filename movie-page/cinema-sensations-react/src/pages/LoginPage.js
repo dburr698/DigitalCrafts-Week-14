@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { connect } from "react-redux"
+import * as actionCreator from '../stores/creators/actionCreators'
 
 function LoginPage(props) {
 
@@ -22,7 +24,9 @@ function LoginPage(props) {
         }) .then(response => response.json())
         .then(result => {
             if(result.success) {
-                props.history.push('/')
+                localStorage.setItem('jsonwebtoken', result.token)
+                props.onLoggedIn()
+                props.history.push('/browse-movies')
             } else {
                 setMessage(result.message)
             }
@@ -40,4 +44,10 @@ function LoginPage(props) {
     )
 }
 
-export default LoginPage
+const mapDispatchToProps = (dispatch) => {
+    return{ 
+        onLoggedIn: () => dispatch(actionCreator.isLoggedIn())
+    }
+}
+
+export default connect(null, mapDispatchToProps)(LoginPage)

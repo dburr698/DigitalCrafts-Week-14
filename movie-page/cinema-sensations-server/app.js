@@ -5,14 +5,20 @@ const cors = require('cors')
 
 const bcrypt = require('bcryptjs')
 
-const models = require('./models')
+global.models = require('./models')
+
+const jwt = require('jsonwebtoken')
+
+require('dotenv').config()
+
+const authenticate = require('./middleware/authMiddleware')
 
 const salt = 10
 
 app.use(cors())
 app.use(express.json())
 
-app.get('/api/movies', async (req, res) => {
+app.get('/api/movies', authenticate, async (req, res) => {
 
     let movies = await models.Movie.findAll()
     res.json(movies)
@@ -90,7 +96,8 @@ app.post('/api/login', async (req, res) => {
     if(user != null) {
         bcrypt.compare(password, user.password, (error, result) => {
             if(result) {
-                res.json({success: true})
+                const token = jwt.sign({username: username}, process.env.JWT_SECRET_KEY)
+                res.json({success: true, token:token})
             } else {
                 res.json({message: "Password Incorrect"})
             }
