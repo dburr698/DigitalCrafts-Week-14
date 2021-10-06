@@ -33,6 +33,28 @@ function LoginPage(props) {
         }) 
     }
 
+    const handleLoginAsGuestButton = () => {
+
+        const body = {username: 'guest', password: 'password'}
+
+        fetch('http://localhost:8080/api/login',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }) .then(response => response.json())
+        .then(result => {
+            if(result.success) {
+                localStorage.setItem('jsonwebtoken', result.token)
+                props.onLoggedIn()
+                props.history.push('/browse-movies')
+            } else {
+                setMessage(result.message)
+            }
+        }) 
+    }
+
     return (
         <div>
             <h1>Login</h1>
@@ -40,6 +62,7 @@ function LoginPage(props) {
             <input type="password" name="password" onChange={handleLoginChange} placeholder="Password" required />
             {message && <p>{message}</p>}
             <button onClick={handleLoginButton}>Login</button>
+            <button onClick={handleLoginAsGuestButton}>Login as Guest</button>
         </div>
     )
 }

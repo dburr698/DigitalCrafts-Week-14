@@ -12,9 +12,9 @@ function Menu(props) {
 
     return (
         <div className="menu">
-            <NavLink className="link" to='/browse-movies'>Browse</NavLink>
-            <NavLink className="link" to='/favorites'>Favorites</NavLink>
-            <NavLink className="link" to='/add-movie'>Add Movie</NavLink>
+            {props.isLoggedIn ? <NavLink className="link" to='/browse-movies'>Browse</NavLink> : null }
+            {props.isLoggedIn ? <NavLink className="link" to='/favorites'>Favorites</NavLink> : null }
+            {props.isLoggedIn ? <NavLink className="link" to='/add-movie'>Add Movie</NavLink> : null }
             {props.isLoggedIn ? null : <NavLink className="link" to='/'>Login</NavLink>}
             {props.isLoggedIn ? null : <NavLink className="link" to='/register'> Register</NavLink>}
             {props.isLoggedIn ? <NavLink className='link' to='/'><button onClick={handleLogOutButton}>Log Out</button></NavLink>  : null}
@@ -32,7 +32,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return{
-        onLogOut: () => dispatch(actionCreator.isLoggedOut)
+        onLogOut: () => dispatch(actionCreator.isLoggedOut())
     }
 }
 

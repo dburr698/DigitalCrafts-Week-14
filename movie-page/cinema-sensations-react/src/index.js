@@ -17,6 +17,8 @@ import FavoriteMoviesReducer from './stores/reducers/favoriteMoviesReducer';
 import MovieDetailsPage from './pages/MovieDetailsPage';
 import MovieDetailsReducer from './stores/reducers/movieDetailsReducer';
 import isLoggedInReducer from './stores/reducers/isLoggedInReducer';
+import requireAuth from './components/requireAuth';
+import * as actionCreator from './stores/creators/actionCreators'
 
 const reducer = combineReducers({
   fetchRed: FetchMoviesReducer,
@@ -30,6 +32,11 @@ const store = createStore(reducer, /* preloadedState, */ composeEnhancers(
     applyMiddleware(thunk)
   ));
 
+const token = localStorage.getItem('jsonwebtoken')
+if(token) {
+  store.dispatch(actionCreator.isLoggedIn())
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
@@ -37,11 +44,11 @@ ReactDOM.render(
         <BaseLayout>
           <Switch>
             <Route exact path='/' component={LoginPage} />
-            <Route path='/add-movie' component={AddMoviePage} />
-            <Route path='/browse-movies' component={BrowseMovies} />
+            <Route path='/add-movie' component={requireAuth(AddMoviePage)} />
+            <Route path='/browse-movies' component={requireAuth(BrowseMovies)} />
             <Route path='/register' component={RegistrationPage} />
-            <Route path='/favorites' component={FavoritesPage} />
-            <Route path='/details' component={MovieDetailsPage} />
+            <Route path='/favorites' component={requireAuth(FavoritesPage)} />
+            <Route path='/details' component={requireAuth(MovieDetailsPage)} />
           </Switch>
         </BaseLayout>
       </BrowserRouter>
